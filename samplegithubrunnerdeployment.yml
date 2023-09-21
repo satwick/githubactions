@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: github-runner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: github-runner
+  template:
+    metadata:
+      labels:
+        app: github-runner
+    spec:
+      containers:
+        - name: github-runner
+          image: <docker-image>:tag
+          env:
+            - name: RUNNER_NAME
+              value: <runner-name>
+            - name: RUNNER_TOKEN
+              value: <runner-token>
+            - name: ORG_NAME
+              value: <org-name>
+            - name: REPO_URL
+              value: https://github.com/username/repo
+          volumeMounts:
+            - name: runner-workdir
+              mountPath: /_work
+      volumes:
+        - name: runner-workdir
+          emptyDir: {}
+
