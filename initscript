@@ -1,0 +1,4 @@
+$export username=pavan-kumar-99
+$export reponame=medium-manifests
+$export token=<your_token>
+$ kubectl create secret generic github-creds --from-literal=username=$username --from-literal=token=$token --from-literal=reponame=$reponame 
