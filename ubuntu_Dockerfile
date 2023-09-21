@@ -1,0 +1,39 @@
+# Use an official Ubuntu as a parent image
+FROM ubuntu:latest
+
+# Set environment variables for GitHub Runner
+ENV RUNNER_VERSION="2.284.1"
+ENV RUNNER_WORKDIR="_work"
+
+# Install dependencies
+RUN apt-get update -y && \
+    apt-get install -y \
+    sudo \
+    curl \
+    git \
+    jq \
+    iputils-ping \
+    liblttng-ust0 \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    libkrb5-dev \
+    libicu-dev \
+    libunwind8 \
+    libuuid1 \
+    tzdata
+
+# Download and install GitHub Actions Runner
+RUN mkdir actions-runner && \
+    cd actions-runner && \
+    curl -o actions-runner.tar.gz -L https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz && \
+    tar xzf actions-runner.tar.gz && \
+    ./bin/installdependencies.sh && \
+    ./config.sh --url https://github.com/your_username/your_repo --token your_token
+
+# Set the default work directory for the runner
+WORKDIR /actions-runner/${RUNNER_WORKDIR}
+
+# Entrypoint script to start the runner
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+CMD ["/entrypoint.sh"]
